@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:csv/csv.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,6 +33,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
+
   const MyHomePage({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -49,6 +52,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  void onPress() async{
+    String textasset = "assets/text.csv"; //path to text file asset
+    String text = await rootBundle.loadString(textasset);
+    print(text);
+  }
   int _counter = 0;
 
   void _incrementCounter() {
@@ -107,7 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: onPress,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
