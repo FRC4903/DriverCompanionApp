@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
+import "package:path_provider/path_provider.dart";
+import "package:file/src/io.dart";
+import 'package:file_picker/file_picker.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,7 +36,6 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-
   const MyHomePage({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -52,11 +54,62 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  void onPress() async{
+  void onPress() async {
     String textasset = "assets/text.csv"; //path to text file asset
     String text = await rootBundle.loadString(textasset);
     print(text);
   }
+
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+
+    return directory.path;
+  }
+
+  Future<File> get _localFile async {
+    final path = await _localPath;
+    return File('$path/text.csv');
+  }
+
+  Future<File> writeToFile(c) async {
+    final file = await _localFile;
+
+    // Write the file
+    return file.writeAsString('$c');
+  }
+
+  // Future<String> readAsString() async {
+  //   try {
+  //     final file = await _localFile;
+
+  //     // Read the file
+  //     final contents = await file.readAsString();
+
+  //     return contents;
+  //   } catch (e) {
+  //     // If encountering an error, return 0
+  //     return "0";
+  //   }
+  // }
+
+  void _pickFile() async {
+    // opens storage to pick files and the picked file or files
+    // are assigned into result and if no file is chosen result is null.
+    // you can also toggle "allowMultiple" true or false depending on your need
+    final result = await FilePicker.platform.pickFiles(allowMultiple: false);
+
+    // if no file is picked
+    if (result == null) return;
+
+    // we will log the name, size and path of the
+    // first picked file (if multiple are selected)
+    print(result.files.first.name);
+    print(result.files.first.size);
+    print(result.files.first.path);
+    writeToFile(rootBundle.load(result.files.first.path.toString()));
+    print(rootBundle.load(result.files.first.path.toString()));
+  }
+
   int _counter = 0;
 
   void _incrementCounter() {
@@ -115,8 +168,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: onPress,
-        tooltip: 'Increment',
+        onPressed: _pickFile,
+        tooltip: 'readddd',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
