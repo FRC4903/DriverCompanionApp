@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:file_picker/file_picker.dart';
+import 'package:csv/csv.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:csv/csv.dart';
+import 'dart:convert' show utf8;
+import 'dart:io';
 
 void main() {
   runApp(MyApp());
@@ -39,6 +45,21 @@ class ScaffoldState extends State<MyScaffold> {
     'opponent2': '',
     'opponent3': ''
   };
+
+  Future<List<List<dynamic>>?> pickCSVFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['csv'],
+    );
+    if (result != null) {
+      PlatformFile file = result.files.first;
+      String filePath = file.path.toString();
+      List<List<dynamic>> csvTable = const CsvToListConverter()
+          .convert(utf8.decode(await File(filePath).readAsBytes()));
+      return csvTable;
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,6 +170,13 @@ class ScaffoldState extends State<MyScaffold> {
             },
             child: Text('Generate Data'),
           ),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () async {
+              await pickCSVFile();
+            },
+            child: Text('Pick CSV File'),
+          ),
         ],
       ),
     );
@@ -163,11 +191,25 @@ class Page1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final data = [
+    final data1 = [
       new MyData('A', 5),
       new MyData('B', 25),
       new MyData('C', 100),
       new MyData('D', 75),
+    ];
+
+    final data2 = [
+      new MyData('E', 20),
+      new MyData('F', 50),
+      new MyData('G', 75),
+      new MyData('H', 30),
+    ];
+
+    final data3 = [
+      new MyData('I', 10),
+      new MyData('J', 70),
+      new MyData('K', 25),
+      new MyData('L', 50),
     ];
 
     return Scaffold(
@@ -178,18 +220,70 @@ class Page1 extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            charts.BarChart(
-              [
-                new charts.Series<MyData, String>(
-                  id: 'Sales',
-                  colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-                  domainFn: (MyData data, _) => data.domain,
-                  measureFn: (MyData data, _) => data.measure,
-                  data: data,
-                ),
-              ],
-              animate: true,
-              vertical: false,
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  SizedBox(width: 10),
+                  SizedBox(
+                    width: (MediaQuery.of(context).size.width - 50) / 3,
+                    height: 300,
+                    child: charts.BarChart(
+                      [
+                        new charts.Series<MyData, String>(
+                          id: 'Sales',
+                          colorFn: (_, __) =>
+                              charts.MaterialPalette.blue.shadeDefault,
+                          domainFn: (MyData data, _) => data.domain,
+                          measureFn: (MyData data, _) => data.measure,
+                          data: data1,
+                        ),
+                      ],
+                      animate: true,
+                      vertical: true,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  SizedBox(
+                    width: (MediaQuery.of(context).size.width - 50) / 3,
+                    height: 300,
+                    child: charts.BarChart(
+                      [
+                        new charts.Series<MyData, String>(
+                          id: 'Sales',
+                          colorFn: (_, __) =>
+                              charts.MaterialPalette.blue.shadeDefault,
+                          domainFn: (MyData data, _) => data.domain,
+                          measureFn: (MyData data, _) => data.measure,
+                          data: data2,
+                        ),
+                      ],
+                      animate: true,
+                      vertical: true,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  SizedBox(
+                    width: (MediaQuery.of(context).size.width - 50) / 3,
+                    height: 300,
+                    child: charts.BarChart(
+                      [
+                        new charts.Series<MyData, String>(
+                          id: 'Sales',
+                          colorFn: (_, __) =>
+                              charts.MaterialPalette.blue.shadeDefault,
+                          domainFn: (MyData data, _) => data.domain,
+                          measureFn: (MyData data, _) => data.measure,
+                          data: data3,
+                        ),
+                      ],
+                      animate: true,
+                      vertical: true,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                ],
+              ),
             ),
             SizedBox(height: 30),
             ElevatedButton(
