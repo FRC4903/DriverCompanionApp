@@ -6,6 +6,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:csv/csv.dart';
 import 'dart:convert' show utf8;
 import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
 
 void main() {
   runApp(MyApp());
@@ -52,13 +54,23 @@ class ScaffoldState extends State<MyScaffold> {
       allowedExtensions: ['csv'],
     );
     if (result != null) {
-      PlatformFile file = result.files.first;
-      String filePath = file.path.toString();
-      List<List<dynamic>> csvTable = const CsvToListConverter()
-          .convert(utf8.decode(await File(filePath).readAsBytes()));
+      Uint8List fileBytes = result.files.first.bytes!;
+      List<List<dynamic>> csvTable = await readCSV(fileBytes);
       return csvTable;
     }
     return null;
+  }
+
+  Future<List<List<dynamic>>> readCSV(Uint8List fileBytes) async {
+    String fileContent = utf8.decode(fileBytes);
+    List<List<dynamic>> csvTable =
+        const CsvToListConverter().convert(fileContent);
+    return csvTable;
+  }
+
+  Future<String> getFileContent(String filePath) async {
+    File file = File(filePath);
+    return await file.readAsString();
   }
 
   @override
@@ -173,10 +185,15 @@ class ScaffoldState extends State<MyScaffold> {
           SizedBox(height: 20),
           ElevatedButton(
             onPressed: () async {
-              await pickCSVFile();
+              List<List<dynamic>>? csvTable = await pickCSVFile();
+              if (csvTable != null) {
+                print(csvTable);
+              } else {
+                print('No file picked');
+              }
             },
-            child: Text('Pick CSV File'),
-          ),
+            child: Text('Pick CSV file'),
+          )
         ],
       ),
     );
