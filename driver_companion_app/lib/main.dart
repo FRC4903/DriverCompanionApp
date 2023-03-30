@@ -1,177 +1,249 @@
 import 'package:flutter/material.dart';
-import 'package:csv/csv.dart';
-import 'package:flutter/services.dart';
-import "package:path_provider/path_provider.dart";
-import "package:file/src/io.dart";
-import 'package:file_picker/file_picker.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.orange,
-        brightness: Brightness.dark,
+        primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyScaffold(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class MyScaffold extends StatefulWidget {
+  const MyScaffold({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MyScaffold> createState() => ScaffoldState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  void onPress() async {
-    String textasset = "assets/text.csv"; //path to text file asset
-    String text = await rootBundle.loadString(textasset);
-    print(text);
-  }
+class ScaffoldState extends State<MyScaffold> {
+  final _textController1 = TextEditingController();
+  final _textController2 = TextEditingController();
+  final _textController3 = TextEditingController();
+  final _textController4 = TextEditingController();
+  final _textController5 = TextEditingController();
 
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-
-    return directory.path;
-  }
-
-  Future<File> get _localFile async {
-    final path = await _localPath;
-    return File('$path/text.csv');
-  }
-
-  Future<File> writeToFile(c) async {
-    final file = await _localFile;
-
-    // Write the file
-    return file.writeAsString('$c');
-  }
-
-  // Future<String> readAsString() async {
-  //   try {
-  //     final file = await _localFile;
-
-  //     // Read the file
-  //     final contents = await file.readAsString();
-
-  //     return contents;
-  //   } catch (e) {
-  //     // If encountering an error, return 0
-  //     return "0";
-  //   }
-  // }
-
-  void _pickFile() async {
-    // opens storage to pick files and the picked file or files
-    // are assigned into result and if no file is chosen result is null.
-    // you can also toggle "allowMultiple" true or false depending on your need
-    final result = await FilePicker.platform.pickFiles(allowMultiple: false);
-
-    // if no file is picked
-    if (result == null) return;
-
-    // we will log the name, size and path of the
-    // first picked file (if multiple are selected)
-    print(result.files.first.name);
-    print(result.files.first.size);
-    print(result.files.first.path);
-    writeToFile(rootBundle.load(result.files.first.path.toString()));
-    print(rootBundle.load(result.files.first.path.toString()));
-  }
-
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  var inputs = {
+    'ally1': '',
+    'ally2': '',
+    'opponent1': '',
+    'opponent2': '',
+    'opponent3': ''
+  };
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text('4903 Driver App Companion'),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          //Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Text(
+              'Who are your teammates?',
+              style: TextStyle(fontSize: 21),
+            ),
+          ]),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              SizedBox(width: 20),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: _textController1,
+                    decoration: InputDecoration(
+                      hintText: 'Ally',
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 20),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: _textController2,
+                    decoration: InputDecoration(
+                      hintText: 'Ally',
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 20),
+            ],
+          ),
+          //]),
+          SizedBox(
+            height: 40.0,
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Text(
+              'Who are you up against?',
+              style: TextStyle(fontSize: 21),
+            ),
+          ]),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              SizedBox(width: 20),
+              Expanded(
+                child: TextField(
+                  controller: _textController3,
+                  decoration: InputDecoration(
+                    hintText: 'Opponent',
+                  ),
+                ),
+              ),
+              SizedBox(width: 20),
+              Expanded(
+                child: TextField(
+                  controller: _textController4,
+                  decoration: InputDecoration(
+                    hintText: 'Opponent',
+                  ),
+                ),
+              ),
+              SizedBox(width: 20),
+              Expanded(
+                child: TextField(
+                  controller: _textController5,
+                  decoration: InputDecoration(
+                    hintText: 'Opponent',
+                  ),
+                ),
+              ),
+              SizedBox(width: 20),
+            ],
+          ),
+          SizedBox(
+            height: 40,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              inputs['ally1'] = _textController1.text;
+              inputs['ally2'] = _textController2.text;
+              inputs['opponent1'] = _textController3.text;
+              inputs['opponent2'] = _textController4.text;
+              inputs['opponent3'] = _textController5.text;
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Page1(inputs: inputs),
+                ),
+              );
+            },
+            child: Text('Generate Data'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class Page1 extends StatelessWidget {
+  //teleop page
+  Page1({super.key, required this.inputs});
+
+  final inputs;
+
+  @override
+  Widget build(BuildContext context) {
+    final data = [
+      new MyData('A', 5),
+      new MyData('B', 25),
+      new MyData('C', 100),
+      new MyData('D', 75),
+    ];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('My Team'),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+            charts.BarChart(
+              [
+                new charts.Series<MyData, String>(
+                  id: 'Sales',
+                  colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+                  domainFn: (MyData data, _) => data.domain,
+                  measureFn: (MyData data, _) => data.measure,
+                  data: data,
+                ),
+              ],
+              animate: true,
+              vertical: false,
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Page2(inputs: inputs),
+                  ),
+                );
+              },
+              child: Text('Opposing Team'),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _pickFile,
-        tooltip: 'readddd',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+}
+
+class Page2 extends StatelessWidget {
+  //teleop page
+  const Page2({super.key, required this.inputs});
+
+  final inputs;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Opposing Team'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('Page 2'),
+            SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('My Team'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MyData {
+  final String domain;
+  final int measure;
+
+  MyData(this.domain, this.measure);
 }
