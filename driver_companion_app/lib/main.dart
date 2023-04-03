@@ -51,9 +51,11 @@ class ScaffoldState extends State<MyScaffold> {
       allowedExtensions: ['csv'],
     );
     if (result != null) {
-      Uint8List fileBytes = result.files.first.bytes!;
-      List<List<dynamic>> csvTable = await readCSV(fileBytes);
-      return csvTable;
+      Uint8List? fileBytes = result.files.first.bytes;
+      if (fileBytes != null) {
+        List<List<dynamic>> csvTable = await readCSV(fileBytes);
+        return csvTable;
+      }
     }
     return null;
   }
@@ -160,6 +162,17 @@ class ScaffoldState extends State<MyScaffold> {
               SizedBox(width: 20),
             ],
           ),
+
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () async {
+              csvTable = await pickCSVFile();
+              if (csvTable != null) {
+                print(csvTable);
+              }
+            },
+            child: Text('Pick CSV file'),
+          ),
           SizedBox(
             height: 40,
           ),
@@ -179,16 +192,6 @@ class ScaffoldState extends State<MyScaffold> {
               );
             },
             child: Text('Generate Data'),
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () async {
-              csvTable = await pickCSVFile();
-              if (csvTable != null) {
-                print(csvTable);
-              }
-            },
-            child: Text('Pick CSV file'),
           )
         ],
       ),
@@ -213,13 +216,16 @@ class Page1 extends StatelessWidget {
     List<dynamic>? opp2;
     List<dynamic>? opp3;
 
-    for (List<dynamic> row in csvTable!) {
+    for (List<dynamic> row in csvTable) {
       if (row[0] == 4903) {
         ourteam = row;
         break;
       }
     }
     for (List<dynamic> row in csvTable!) {
+      if (row == null)
+        print(
+            'ITS NULL ITS NULL ITS NULL ITS NULL ITS NULL ITS NULL ITS NULL ITS NULL ITS NULL ITS NULL ITS NULL ITS NULL ');
       if (row[0].toString() == inputs['ally1']) {
         ally1 = row;
         break;
@@ -373,14 +379,14 @@ class Page1 extends StatelessWidget {
       ];
 
       autopoints = [
-        new MyData('4903', ourteam[9]),
-        new MyData(inputs['ally1'], ally1[9]),
-        new MyData(inputs['ally2'], ally2[9]),
+        new MyData('4903', (ourteam[9] * 100).toInt()),
+        new MyData(inputs['ally1'], (ally1[9] * 100).toInt()),
+        new MyData(inputs['ally2'], (ally2[9] * 100).toInt()),
       ];
       teleoppoints = [
-        new MyData('4903', ourteam[10]),
-        new MyData(inputs['ally1'], ally1[10]),
-        new MyData(inputs['ally2'], ally2[10]),
+        new MyData('4903', (ourteam[10] * 100).toInt()),
+        new MyData(inputs['ally1'], (ally1[10] * 100).toInt()),
+        new MyData(inputs['ally2'], (ally2[10] * 100).toInt()),
       ];
       robotsbalanced = [
         new MyData('4903', (ourteam[11] * 100).toInt()),
@@ -1023,14 +1029,14 @@ class Page2 extends StatelessWidget {
       ];
 
       autopoints = [
-        new MyData(inputs['opp1'], opp1[9]),
-        new MyData(inputs['opp2'], opp2[9]),
-        new MyData(inputs['opp3'], opp3[9]),
+        new MyData(inputs['opp1'], (opp1[9] * 100).toInt()),
+        new MyData(inputs['opp2'], (opp2[9] * 100).toInt()),
+        new MyData(inputs['opp3'], (opp3[9] * 100).toInt()),
       ];
       teleoppoints = [
-        new MyData(inputs['opp1'], opp1[10]),
-        new MyData(inputs['opp2'], opp2[10]),
-        new MyData(inputs['opp3'], opp3[10]),
+        new MyData(inputs['opp1'], (opp1[10] * 100).toInt()),
+        new MyData(inputs['opp2'], (opp2[10] * 100).toInt()),
+        new MyData(inputs['opp3'], (opp3[10] * 100).toInt()),
       ];
       robotsbalanced = [
         new MyData(inputs['opp1'], (opp1[11] * 100).toInt()),

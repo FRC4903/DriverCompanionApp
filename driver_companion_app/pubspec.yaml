@@ -38,6 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   csv: ^5.0.1
   file_picker: ^5.2.6
+  file_selector: 
   open_file: ^2.1.1
   path_provider: ^2.0.14
   charts_flutter:
